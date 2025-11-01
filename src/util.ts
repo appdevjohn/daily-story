@@ -123,8 +123,8 @@ const getPrompt = (language: string, level: string) => {
 
 // Configure OpenAI client to use local Ollama
 const client = new OpenAI({
-  baseURL: 'http://localhost:11434/v1',
-  apiKey: 'ollama', // Ollama doesn't require a real API key
+  baseURL: process.env.LLM_BASE_URL || 'http://localhost:11434/v1',
+  apiKey: process.env.LLM_API_KEY || 'ollama',
 })
 
 export const generateStory = async (
