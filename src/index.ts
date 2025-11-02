@@ -4,7 +4,6 @@ import express, { Request, Response } from 'express'
 import { CronJob } from 'cron'
 import { readFile } from 'fs/promises'
 import {
-  generateStory,
   generateDailyStories,
   SUPPORTED_LANGUAGES,
   EARLY_LEVELS,
@@ -24,47 +23,79 @@ const job = CronJob.from({
       ...INTERMEDIATE_LEVELS,
     ]),
   start: true,
-  timeZone: 'America/New_York',
+  timeZone: 'utc',
 })
 
-app.get('/:language/:level', async (req: Request, res: Response) => {
-  const { language, level } = req.params
+// Home page route
+app.get('/', (_req: Request, res: Response) => {
+  res.render('home', {
+    languages: SUPPORTED_LANGUAGES,
+    earlyLevels: EARLY_LEVELS,
+    intermediateLevels: INTERMEDIATE_LEVELS,
+  })
+})
 
-  // Build file path based on current date
-  const now = new Date()
-  const year = now.getFullYear().toString()
-  const month = (now.getMonth() + 1).toString().padStart(2, '0')
-  const day = now.getDate().toString().padStart(2, '0')
-
-  const filePath = path.join(
-    process.cwd(),
-    'stories',
-    year,
-    month,
-    day,
-    language!.toLowerCase(),
-    level!.toLowerCase(),
-    'story.json'
-  )
-
-  let content: StoryContent
-
+app.get('/:language/:level', async (req: Request, res: Response, next) => {
   try {
-    // Try to load story from filesystem
-    const fileContent = await readFile(filePath, 'utf-8')
-    content = JSON.parse(fileContent)
-    console.log(`Loaded story from ${filePath}`)
-  } catch (error) {
-    // If file doesn't exist, generate a new story
-    console.log(`Story not found at ${filePath}, generating new story...`)
-    content = await generateStory(language!, level!)
-  }
+    const { language, level } = req.params
 
-  res.render('index', {
-    title: content.title,
-    story: content.story,
-    messages: content.messages,
-    questions: content.questions,
+    // Build file path based on current date
+    const now = new Date()
+    const year = now.getFullYear().toString()
+    const month = (now.getMonth() + 1).toString().padStart(2, '0')
+    const day = now.getDate().toString().padStart(2, '0')
+
+    const filePath = path.join(
+      process.cwd(),
+      'stories',
+      year,
+      month,
+      day,
+      language!.toLowerCase(),
+      level!.toLowerCase(),
+      'story.json'
+    )
+
+    let content: StoryContent
+
+    try {
+      // Try to load story from filesystem
+      const fileContent = await readFile(filePath, 'utf-8')
+      content = JSON.parse(fileContent)
+      console.log(`Loaded story from ${filePath}`)
+    } catch (error) {
+      // If file doesn't exist, generate a new story
+      console.log(`Story not found at ${filePath}, generating new story...`)
+      throw error
+    }
+
+    res.render('index', {
+      title: content.title,
+      story: content.story,
+      messages: content.messages,
+      questions: content.questions,
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// 404 handler - must be after all other routes
+app.use((req: Request, res: Response) => {
+  res.status(404).render('error', {
+    status: 404,
+    message: 'Page Not Found',
+    details: `The requested URL ${req.url} was not found on this server.`,
+  })
+})
+
+// 500 error handler - must be last
+app.use((err: Error, _req: Request, res: Response, _next: any) => {
+  console.error('Error occurred:', err)
+  res.status(500).render('error', {
+    status: 500,
+    message: 'Internal Server Error',
+    details: err.message || 'An unexpected error occurred.',
   })
 })
 

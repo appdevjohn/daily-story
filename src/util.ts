@@ -216,10 +216,14 @@ export const generateDailyStories = async (
   levels: string[]
 ) => {
   console.log('Generating daily stories using Message Batches API...')
+
   const now = new Date()
-  const year = now.getFullYear().toString()
-  const month = (now.getMonth() + 1).toString().padStart(2, '0')
-  const day = now.getDate().toString().padStart(2, '0')
+  const tomorrowUtc = new Date(now)
+  tomorrowUtc.setUTCDate(now.getUTCDate() + 1)
+
+  const year = tomorrowUtc.getUTCFullYear().toString()
+  const month = (tomorrowUtc.getUTCMonth() + 1).toString().padStart(2, '0')
+  const day = tomorrowUtc.getUTCDate().toString().padStart(2, '0')
 
   // Create batch requests
   const batchRequests = []
