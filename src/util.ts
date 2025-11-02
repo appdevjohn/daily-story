@@ -1,4 +1,4 @@
-import OpenAI from 'openai'
+import Anthropic from '@anthropic-ai/sdk'
 import { mkdir, writeFile } from 'fs/promises'
 import path from 'path'
 
@@ -121,10 +121,28 @@ const getPrompt = (language: string, level: string) => {
   return promptString
 }
 
-// Configure OpenAI client to use local Ollama
-const client = new OpenAI({
-  baseURL: process.env.LLM_BASE_URL || 'http://localhost:11434/v1',
-  apiKey: process.env.LLM_API_KEY || 'ollama',
+const cleanJsonString = (string: string) => {
+  return (
+    string
+      // Remove Markdown fences like ```json or ```
+      .replace(/```json|```/gi, '')
+      // Remove stray triple quotes or language tags
+      .replace(/^json\s*/i, '')
+      // Replace smart quotes with straight ones
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'")
+      // Escape unescaped inner quotes inside strings
+      // (only if inside value text between colons)
+      .replace(/:\s*"([^"]*?)"([^",}\]\n\r])/g, ':"$1\\"$2')
+      // Remove trailing commas before } or ]
+      .replace(/,\s*([}\]])/g, '$1')
+      // Trim whitespace
+      .trim()
+  )
+}
+
+const client = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY || '',
 })
 
 export const generateStory = async (
@@ -132,35 +150,91 @@ export const generateStory = async (
   level: string
 ): Promise<StoryContent> => {
   console.log(`Generating story for ${language} at the ${level} level...`)
-  const response = await client.chat.completions.create({
-    model: 'llama3.1:8b',
-    messages: [
-      {
-        role: 'user',
-        content: getPrompt(language, level),
-      },
-    ],
-    response_format: { type: 'json_object' },
+
+  const response = await client.messages.create({
+    model: 'claude-sonnet-4-5',
+    messages: [{ role: 'user', content: getPrompt(language, level) }],
+    max_tokens: 4096,
   })
-  const content: string = response.choices[0]?.message?.content || '{}'
-  return JSON.parse(content) as StoryContent
+
+  const responseText: string = (response.content?.[0] as any)?.text ?? '{}'
+  const cleanedResponse = cleanJsonString(responseText)
+
+  return JSON.parse(cleanedResponse) as StoryContent
 }
 
 export const generateDailyStories = async (
   languages: string[],
   levels: string[]
 ) => {
-  console.log('Generating daily stories...')
+  console.log('Generating daily stories using Message Batches API...')
   const now = new Date()
   const year = now.getFullYear().toString()
   const month = (now.getMonth() + 1).toString().padStart(2, '0')
   const day = now.getDate().toString().padStart(2, '0')
 
-  for await (const language of languages) {
+  // Create batch requests
+  const batchRequests = []
+  for (const language of languages) {
     for (const level of levels) {
+      batchRequests.push({
+        custom_id: `${language.toLowerCase()}-${level.toLowerCase()}`,
+        params: {
+          model: 'claude-sonnet-4-5',
+          messages: [
+            { role: 'user' as const, content: getPrompt(language, level) },
+          ],
+          max_tokens: 4096,
+        },
+      })
+    }
+  }
+
+  console.log(`Creating batch with ${batchRequests.length} requests...`)
+
+  // Create the batch
+  const batch = await client.messages.batches.create({
+    requests: batchRequests,
+  })
+
+  console.log(`Batch created with ID: ${batch.id}`)
+  console.log('Polling for completion...')
+
+  // Poll for completion
+  let completedBatch = await client.messages.batches.retrieve(batch.id)
+  while (completedBatch.processing_status === 'in_progress') {
+    await new Promise((resolve) => setTimeout(resolve, 5000)) // Wait 5 seconds
+    completedBatch = await client.messages.batches.retrieve(batch.id)
+    console.log(`Batch status: ${completedBatch.processing_status}`)
+  }
+
+  if (completedBatch.processing_status === 'canceling') {
+    throw new Error('Batch was canceled')
+  }
+
+  console.log('Batch completed! Processing results...')
+
+  // Retrieve and process results
+  const results = await client.messages.batches.results(batch.id)
+
+  for await (const result of results) {
+    if (result.result.type === 'succeeded') {
+      const parts = result.custom_id.split('-')
+      const language = parts[0]
+      const level = parts[1]
+
+      if (!language || !level) {
+        console.error(`Invalid custom_id format: ${result.custom_id}`)
+        continue
+      }
+
       try {
-        const story = await generateStory(language, level)
-        console.log(`Generated story for ${language} at the ${level}:`)
+        const responseText: string =
+          (result.result.message.content?.[0] as any)?.text ?? '{}'
+        const cleanedResponse = cleanJsonString(responseText)
+        const story = JSON.parse(cleanedResponse) as StoryContent
+
+        console.log(`Processed story for ${language} at ${level}`)
 
         // Save story to file
         const dirPath = path.join(
@@ -169,8 +243,8 @@ export const generateDailyStories = async (
           year,
           month,
           day,
-          language.toLowerCase(),
-          level.toLowerCase()
+          language,
+          level
         )
         await mkdir(dirPath, { recursive: true })
 
@@ -179,10 +253,21 @@ export const generateDailyStories = async (
         console.log(`Saved story to ${filePath}`)
       } catch (error) {
         console.error(
-          `Error generating story for ${language} at ${level}:`,
+          `Error processing story for ${language} at ${level}:`,
           error
         )
       }
+    } else if (result.result.type === 'errored') {
+      console.error(
+        `Failed to generate story for ${result.custom_id}:`,
+        result.result.error
+      )
+    } else {
+      console.error(
+        `Failed to generate story for ${result.custom_id}: ${result.result.type}`
+      )
     }
   }
+
+  console.log('All stories generated and saved!')
 }
