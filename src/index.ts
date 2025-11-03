@@ -14,6 +14,7 @@ import {
 const app = express()
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
+app.use(express.static(path.join(__dirname, 'public')))
 
 const job = CronJob.from({
   cronTime: '0 0 * * *', // Run at midnight every day
@@ -69,11 +70,17 @@ app.get('/:language/:level', async (req: Request, res: Response, next) => {
       throw error
     }
 
-    res.render('index', {
+    res.render('story', {
       title: content.title,
       story: content.story,
       messages: content.messages,
       questions: content.questions,
+      date: now.toLocaleDateString(undefined, {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      }),
     })
   } catch (error) {
     next(error)
