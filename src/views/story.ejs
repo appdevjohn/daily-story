@@ -42,13 +42,7 @@
     <% } %>
 
     <p class="bookmark-message">Bookmark this page and come back tomorrow for a new story!</p>
-    <ul class="difficulty-links">
-        <% allLevels.forEach((lvl) => { %>
-            <li class="<%= lvl === level ? 'active' : '' %>">
-                <a href="/<%= languageParam %>/<%= lvl.toLowerCase() %>"><%= lvl %></a>
-            </li>
-        <% }) %>
-    </ul>
+    <div class="home-link-container"><a href="/" class="home-link">Select Language & Skill Level</a></div>
 
     <script>
         function selectAnswer(element) {

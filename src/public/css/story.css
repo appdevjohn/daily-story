@@ -22,9 +22,6 @@
 .message {
     margin-bottom: 15px;
     padding: 12px 16px;
-    border-radius: 18px;
-    max-width: 70%;
-    word-wrap: break-word;
 }
 .message .sender {
     font-size: 0.85em;
@@ -79,35 +76,14 @@
     margin-top: 40px;
     font-size: 1.1rem;
 }
-.difficulty-links {
-    list-style: none;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    padding: 0;
+.home-link-container {
+    text-align: center;
     margin-bottom: 2rem;
 }
-.difficulty-links li a {
-    display: block;
-    padding: 4px 8px;
-    background-color: #fff;
-    color: #333;
+.home-link {
+    display: inline-block;
     text-decoration: none;
-    border-radius: 3px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-.difficulty-links li a:hover {
-    background-color: #e0e0e0;
-}
-.difficulty-links li.active a {
-    background-color: #007bff;
-    color: white;
-}
-.difficulty-links li.active a:hover {
-    background-color: #0056b3;
+    color: #007bff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -147,18 +123,7 @@
         color: white;
         border-color: #bd2130;
     }
-    .difficulty-links li a {
-        background-color: #3a3a3a;
-        color: #e0e0e0;
-    }
-    .difficulty-links li a:hover {
-        background-color: #4a4a4a;
-    }
-    .difficulty-links li.active a {
-        background-color: #0056b3;
-        color: white;
-    }
-    .difficulty-links li.active a:hover {
-        background-color: #004085;
+    .home-link {
+        color: #66b2ff;
     }
 }

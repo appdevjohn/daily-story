@@ -76,9 +76,7 @@ app.get('/:language/:level', async (req: Request, res: Response, next) => {
       messages: content.messages,
       questions: content.questions,
       language: language!.charAt(0).toUpperCase() + language!.slice(1),
-      languageParam: language!.toLowerCase(),
       level: level!.toUpperCase(),
-      allLevels: [...EARLY_LEVELS, ...INTERMEDIATE_LEVELS],
       date: now.toLocaleDateString(undefined, {
         weekday: 'long',
         year: 'numeric',
