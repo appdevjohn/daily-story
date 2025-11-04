@@ -1,7 +1,6 @@
 import 'dotenv/config'
 import path from 'path'
 import express, { Request, Response } from 'express'
-import { CronJob } from 'cron'
 import { readFile, access } from 'fs/promises'
 import {
   generateDailyStories,
@@ -17,21 +16,6 @@ app.set('views', path.join(__dirname, 'views'))
 
 // Track whether story generation is currently in progress
 let isGeneratingStories = false
-
-const job = CronJob.from({
-  cronTime: '0 0 * * *', // Run at midnight every day
-  onTick: async () => {
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    return generateDailyStories(
-      SUPPORTED_LANGUAGES,
-      [...EARLY_LEVELS, ...INTERMEDIATE_LEVELS],
-      tomorrow
-    )
-  },
-  start: true,
-  timeZone: 'utc',
-})
 
 // Home page route
 app.get('/', (_req: Request, res: Response) => {
@@ -214,5 +198,4 @@ app.use((err: Error, _req: Request, res: Response, _next: any) => {
 
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Server is running on port ${process.env.PORT || 3000}`)
-  job.start()
 })
