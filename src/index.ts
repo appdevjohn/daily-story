@@ -162,9 +162,20 @@ app.get('/:language/:level', async (req: Request, res: Response, next) => {
       content = JSON.parse(fileContent)
       console.log(`Loaded story from ${filePath}`)
     } catch (error) {
-      // If file doesn't exist, generate a new story
-      console.log(`Story not found at ${filePath}, generating new story...`)
-      throw error
+      // If file doesn't exist, render the no-story page
+      console.log(`Story not found at ${filePath}`)
+      res.render('no-story-today', {
+        language: language!.charAt(0).toUpperCase() + language!.slice(1),
+        level: level!.toUpperCase(),
+        date: now.toLocaleDateString(undefined, {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        }),
+        dateISO: now.toISOString().split('T')[0],
+      })
+      return
     }
 
     res.render('story', {

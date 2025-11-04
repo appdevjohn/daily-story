@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Story - <%= language %> - <%= level %></title>
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/story.css">
+</head>
+<body>
+    <div class="story">
+        <h1 class="story-title">No Story Available Today</h1>
+        <time class="story-date" datetime="<%= dateISO %>"><%= date %></time>
+        <p>A story hasn't been generated for today. Try checking again later!</p>
+    </div>
+
+    <div class="home-link-container"><a href="/" class="home-link">Select Language & Skill Level</a></div>
+
+</body>
+</html>
