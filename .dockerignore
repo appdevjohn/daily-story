@@ -1,0 +1,9 @@
+assets/
+dist/
+node_modules/
+stories/
+.env
+.git
+.gitignore
+.DS_Store
+.vscode/
