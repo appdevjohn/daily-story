@@ -137,6 +137,36 @@ app.get('/:language/:level', async (req: Request, res: Response, next) => {
   try {
     const { language, level } = req.params
 
+    // Validate language and level
+    const normalizedLanguage = language?.toLowerCase() || ''
+    const normalizedLevel = level?.toUpperCase() || ''
+
+    const isValidLanguage = SUPPORTED_LANGUAGES.some(
+      (lang) => lang.toLowerCase() === normalizedLanguage
+    )
+    const allLevels = [...EARLY_LEVELS, ...INTERMEDIATE_LEVELS]
+    const isValidLevel = allLevels.includes(normalizedLevel)
+
+    if (!isValidLanguage || !isValidLevel) {
+      const supportedLanguages = SUPPORTED_LANGUAGES.join(', ')
+      const supportedLevels = allLevels.join(', ')
+
+      let errorMessage = 'Unsupported'
+      if (!isValidLanguage && !isValidLevel) {
+        errorMessage = 'Unsupported Language and Level'
+      } else if (!isValidLanguage) {
+        errorMessage = 'Unsupported Language'
+      } else {
+        errorMessage = 'Unsupported Level'
+      }
+
+      return res.status(400).render('error', {
+        status: 400,
+        message: errorMessage,
+        details: `Supported languages: ${supportedLanguages}. Supported levels: ${supportedLevels}.`,
+      })
+    }
+
     // Build file path based on current date
     const now = new Date()
     const year = now.getFullYear().toString()
@@ -149,8 +179,8 @@ app.get('/:language/:level', async (req: Request, res: Response, next) => {
       year,
       month,
       day,
-      language!.toLowerCase(),
-      level!.toLowerCase(),
+      normalizedLanguage,
+      normalizedLevel.toLowerCase(),
       'story.json'
     )
 
@@ -165,8 +195,10 @@ app.get('/:language/:level', async (req: Request, res: Response, next) => {
       // If file doesn't exist, render the no-story page
       console.log(`Story not found at ${filePath}`)
       res.render('no-story-today', {
-        language: language!.charAt(0).toUpperCase() + language!.slice(1),
-        level: level!.toUpperCase(),
+        language:
+          normalizedLanguage.charAt(0).toUpperCase() +
+          normalizedLanguage.slice(1),
+        level: normalizedLevel,
         date: now.toLocaleDateString(undefined, {
           weekday: 'long',
           year: 'numeric',
@@ -183,8 +215,9 @@ app.get('/:language/:level', async (req: Request, res: Response, next) => {
       story: content.story,
       messages: content.messages,
       questions: content.questions,
-      language: language!.charAt(0).toUpperCase() + language!.slice(1),
-      level: level!.toUpperCase(),
+      language:
+        normalizedLanguage.charAt(0).toUpperCase() + normalizedLanguage.slice(1),
+      level: normalizedLevel,
       date: now.toLocaleDateString(undefined, {
         weekday: 'long',
         year: 'numeric',
