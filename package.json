@@ -1,7 +1,7 @@
 {
   "name": "daily-story",
-  "version": "1.0.0",
-  "description": "A daily short story in the language and skill level of your choice.",
+  "version": "1.0.1",
+  "description": "A daily story in the language you're learning, at your skill level.",
   "license": "ISC",
   "author": "John Champion",
   "main": "index.ts",
