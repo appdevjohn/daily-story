@@ -22,7 +22,7 @@
 ```
 src/
 ├── index.ts           # Main Express app (routes, middleware)
-├── util.ts            # AI generation, file operations, utilities
+├── storyService.ts    # Story generation service (class-based)
 ├── views/             # EJS templates
 │   ├── home.ejs       # Language/level selection page
 │   ├── story.ejs      # Story display with quiz
@@ -80,35 +80,66 @@ This architecture allows:
 
 ## Important Files
 
-### src/index.ts (222 lines)
+### src/index.ts (274 lines)
 Main Express application containing:
 - Route handlers: `/`, `/generate-stories`, `/:language/:level`
 - Story file loading logic
 - Template rendering
 - Error handling middleware
+- StoryGenerationService initialization
 
 **Key Routes:**
 - `GET /` - Home page with language/level selection
-- `GET /generate-stories` - Manually trigger story generation
+- `GET /generate-stories` - Async batch creation and completed batch processing
+  - Processes any completed batches first
+  - Checks for in-progress batches (prevents duplicates)
+  - Creates new batches for today and tomorrow if needed
+  - Returns immediately without waiting for completion
 - `GET /:language/:level` - Display today's story
 
-### src/util.ts (349 lines)
-Core AI and utility functions:
+**Route Logic:**
+The `/generate-stories` endpoint follows a three-step process:
+1. Process any completed batches that haven't been written to disk yet
+2. Check for in-progress batches (if found, inform user and return)
+3. Create new batches for missing dates (today/tomorrow)
 
-**Main Functions:**
-- `generateDailyStories(date: Date)` - Generates stories for all 32 language/level combos using batch API
-- `cleanJsonString(str: string)` - Robust JSON cleaning (handles markdown, smart quotes, escaping)
+### src/storyService.ts (771 lines)
+Core story generation service using class-based architecture:
+
+**StoryGenerationService Class:**
+- `constructor(apiKey: string)` - Initializes Anthropic client
+- `listBatches()` - Lists the 2 most recent message batches
+- `checkStoriesExistForDate(date: Date)` - Checks if stories already exist on disk
+- `checkInProgressBatch()` - Returns batch ID if batch is currently processing
+- `processCompletedBatches()` - Finds and processes completed batches
+- `generateStory(language, level, theme?)` - Generates single story (for testing)
+- `generateDailyStories(languages, levels, targetDate?)` - Creates batch request (returns batch ID)
+- `getStoryTool(language, level)` - Builds Anthropic tool schema for structured output
+- `getPrompt(language, level, theme)` - Generates level-specific prompts
 
 **Important Constants:**
-- `SUPPORTED_LANGUAGES` - Array of language names
+- `SUPPORTED_LANGUAGES` - Array of 8 language names
 - `EARLY_LEVELS = ['A1', 'A2']`
 - `INTERMEDIATE_LEVELS = ['B1', 'B2']`
+- `CONVERSATIONAL_THEMES` - 130 conversation topics for A1/A2 levels
+- `NARRATIVE_THEMES` - 100+ story themes for B1/B2 levels
+
+**Theme System:**
+- `selectThemesForDate(date: Date)` - Deterministically selects themes based on date
+- Uses seeded random number generator for consistency (same date = same theme)
+- Returns both conversational and narrative themes
 
 **AI Generation Flow:**
-1. Creates batch request with 32 messages (8 languages × 4 levels)
-2. Polls batch status every 5 seconds until complete
-3. Parses and cleans JSON responses
-4. Writes story files to appropriate directories
+1. Select deterministic theme based on date (using seeded random)
+2. Create batch request with 32 messages (8 languages × 4 levels)
+3. Submit batch and return batch ID immediately (async processing)
+4. Batch processes in background (Anthropic's infrastructure)
+5. Later, `processCompletedBatches()` retrieves results via batch API
+6. Extracts structured output from tool use responses
+7. Writes story files to date-appropriate directories
+
+**Key Architecture Change:**
+Now uses Anthropic's tool/function calling feature instead of parsing JSON from text responses. This eliminates the need for JSON cleaning and provides structured, validated output.
 
 ### views/story.ejs
 Displays story content with interactive quiz. Includes embedded JavaScript for:
@@ -119,25 +150,35 @@ Displays story content with interactive quiz. Includes embedded JavaScript for:
 
 ## Development Patterns
 
-### Singleton Generation Pattern
-The `isGeneratingStories` flag prevents concurrent batch generation:
-```typescript
-let isGeneratingStories = false;
-```
-This protects against API rate limits and duplicate content.
+### Async Batch Processing Pattern
+The system uses asynchronous batch processing to avoid timeouts and improve reliability:
+- `generateDailyStories()` creates batch and returns batch ID immediately
+- Batch processing happens on Anthropic's infrastructure
+- `processCompletedBatches()` is called separately to retrieve and save results
+- `checkInProgressBatch()` prevents duplicate batch creation
+- `checkStoriesExistForDate()` prevents overwriting existing stories
 
-### JSON Cleaning Strategy
-The `cleanJsonString()` function handles various edge cases from AI responses:
-- Removes markdown code fences
-- Normalizes smart quotes from multiple languages
-- Escapes unescaped quotes within JSON string values
-- Removes trailing commas
-- Line-by-line processing to preserve dialogue
+This pattern allows the `/generate-stories` endpoint to respond quickly while batches process in the background.
+
+### Tool-Based Generation
+Uses Anthropic's tool/function calling feature for structured output:
+- `getStoryTool()` defines strict JSON schema for story format
+- `tool_choice: { type: 'tool', name: 'create_story' }` forces tool use
+- Eliminates JSON parsing errors and formatting issues
+- Structured output is type-safe and validated
+
+### Deterministic Theme Selection
+Themes are selected deterministically based on date:
+- Seeded random number generator using date (YYYYMMDD format)
+- Same date always produces same themes across all instances
+- Ensures consistency for all users on a given day
+- 130 conversational themes (A1/A2) and 100+ narrative themes (B1/B2)
 
 ### Error Handling
 - Story not found → renders `no-story-today.ejs`
 - Route not found → 404 error page
 - Server errors → 500 error page with sanitized messages
+- Batch errors logged but don't stop other stories in batch
 
 ## Environment Variables
 
@@ -163,8 +204,10 @@ npm start        # Run compiled production build
 ### Batch API Usage
 - Uses Anthropic's Message Batches API for efficiency
 - Generates all 32 stories (8 languages × 4 levels) in parallel
-- Polling pattern: checks batch status every 5 seconds
+- Async pattern: creates batch, returns immediately, processes later
+- `processCompletedBatches()` retrieves results when batch finishes
 - Individual failures don't stop entire batch
+- System generates stories for both today and tomorrow (if needed)
 
 ### Responsive Design
 - Mobile-first approach
@@ -174,20 +217,28 @@ npm start        # Run compiled production build
 ### Content Strategy
 - Stories reset daily (based on date)
 - Same story shown to all users on a given day
+- Themes selected deterministically per date (130 conversational, 100+ narrative themes)
+- All 8 languages at same level use the same theme on a given day
 - No user accounts or progress tracking
 - Quiz results are client-side only (not persisted)
 
 ## Common Tasks
 
 ### Adding a New Language
-1. Add language to `SUPPORTED_LANGUAGES` in `src/util.ts`
-2. Update AI prompts to support the language
+1. Add language to `SUPPORTED_LANGUAGES` in `src/storyService.ts`
+2. AI prompts automatically support the new language (no changes needed)
 3. Rebuild and restart
 
+### Adding New Themes
+1. Add themes to `CONVERSATIONAL_THEMES` or `NARRATIVE_THEMES` in `src/storyService.ts`
+2. Themes are automatically selected using deterministic random selection
+3. No other changes needed
+
 ### Adjusting Story Generation
-- Modify system prompts in `generateDailyStories()` function in `src/util.ts`
-- Update word counts, content requirements, or question format
-- Consider impact on JSON schema validation
+- Modify prompts in `getPrompt()` method in `src/storyService.ts`
+- Update tool schema in `getStoryTool()` method if changing story structure
+- Update word counts, content requirements, or question format in prompts
+- Consider impact on TypeScript `StoryContent` type
 
 ### Changing Quiz Behavior
 - Edit embedded `<script>` in `src/views/story.ejs`
@@ -201,10 +252,18 @@ npm start        # Run compiled production build
 - Trade-off: No user accounts, analytics, or progress tracking
 - Suitable for small-to-medium scale deployment
 
-**Batch Generation:**
+**Async Batch Generation:**
 - More efficient than generating on-demand per user request
-- Allows pre-generation for next day
+- Allows pre-generation for next day (generates both today and tomorrow)
 - Reduces latency for end users
+- Async pattern prevents API timeout issues
+- Batch processing handled by Anthropic's infrastructure
+
+**Tool-Based Generation:**
+- Structured output eliminates JSON parsing errors
+- Type-safe and validated responses
+- Simpler error handling than text parsing
+- More reliable than prompt-based JSON generation
 
 **Client-Side Quiz:**
 - No server-side validation needed
@@ -214,10 +273,15 @@ npm start        # Run compiled production build
 ## Gotchas
 
 1. **Stories Directory:** The `stories/` directory is gitignored and must be created on first run
-2. **Concurrent Generation:** Only one batch generation can run at a time (by design)
-3. **JSON Cleaning:** AI responses sometimes include markdown or improperly escaped quotes - `cleanJsonString()` handles this
+2. **Async Batch Processing:** Batches are created asynchronously and processed later
+   - First call to `/generate-stories` creates batch
+   - Subsequent calls check for and process completed batches
+   - Must call endpoint again after batch completes to write files to disk
+3. **In-Progress Detection:** System prevents creating new batches while one is in progress
 4. **Case Sensitivity:** Language and level parameters in URLs are case-insensitive (converted to lowercase)
 5. **Date-Based Keys:** Stories are keyed by date, so timezone differences could cause confusion
+6. **Theme Consistency:** All languages use the same theme on a given date (by design)
+7. **Batch ID Format:** Custom IDs use format `YYYYMMDD-language-level` to identify date and content
 
 ## Security Notes
 
