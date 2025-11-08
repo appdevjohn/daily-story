@@ -336,92 +336,6 @@ export class StoryGenerationService {
   }
 
   /**
-   * Process the results of a single completed batch
-   */
-  private async processBatchResults(batchId: string): Promise<void> {
-    console.log(`Processing results for batch ${batchId}...`)
-
-    try {
-      const results = await this.client.messages.batches.results(batchId)
-
-      for await (const result of results) {
-        if (result.result.type === 'succeeded') {
-          // Parse custom_id format: YYYYMMDD-language-level
-          const parts = result.custom_id.split('-')
-          const dateStr = parts[0]
-          const language = parts[1]
-          const level = parts[2]
-
-          if (!dateStr || !language || !level || dateStr.length !== 8) {
-            console.error(`Invalid custom_id format: ${result.custom_id}`)
-            continue
-          }
-
-          // Extract date components from custom_id
-          const resultYear = dateStr.substring(0, 4)
-          const resultMonth = dateStr.substring(4, 6)
-          const resultDay = dateStr.substring(6, 8)
-
-          try {
-            // Extract the tool use from the response
-            const toolUse = result.result.message.content?.find(
-              (block) => block.type === 'tool_use'
-            )
-
-            if (!toolUse || toolUse.type !== 'tool_use') {
-              throw new Error('No tool use found in batch response')
-            }
-
-            const story = toolUse.input as StoryContent
-
-            console.log(
-              `Processed story for ${language} at ${level} (${dateStr})`
-            )
-
-            // Save story to file using date from custom_id
-            const dirPath = path.join(
-              process.cwd(),
-              'stories',
-              resultYear,
-              resultMonth,
-              resultDay,
-              language,
-              level
-            )
-            await mkdir(dirPath, { recursive: true })
-
-            const filePath = path.join(dirPath, 'story.json')
-            await writeFile(filePath, JSON.stringify(story, null, 2), 'utf-8')
-            console.log(`Saved story to ${filePath}`)
-          } catch (error) {
-            console.error(
-              `Error processing story for ${language} at ${level}:`,
-              error instanceof Error ? error.message : 'Unknown error'
-            )
-          }
-        } else if (result.result.type === 'errored') {
-          const errorMsg =
-            typeof result.result.error === 'object'
-              ? JSON.stringify(result.result.error)
-              : String(result.result.error)
-          console.error(
-            `Failed to generate story for ${result.custom_id}: ${errorMsg}`
-          )
-        } else {
-          console.error(
-            `Failed to generate story for ${result.custom_id}: ${result.result.type}`
-          )
-        }
-      }
-    } catch (error) {
-      console.error(
-        `Error processing batch ${batchId}:`,
-        error instanceof Error ? error.message : 'Unknown error'
-      )
-    }
-  }
-
-  /**
    * Find and process any completed batches that haven't been processed yet
    */
   async processCompletedBatches(): Promise<{
@@ -443,26 +357,22 @@ export class StoryGenerationService {
       console.log(`Found ${completedBatches.length} completed batches`)
 
       for (const batch of completedBatches) {
-        // To determine if this batch has been processed, we need to:
-        // 1. Get a sample result to extract the date
-        // 2. Check if stories exist for that date
-
         try {
-          // Get the first result to extract the date
+          // Fetch results once and collect them into an array
           const results = await this.client.messages.batches.results(batch.id)
-          let sampleCustomId: string | null = null
+          const allResults = []
 
           for await (const result of results) {
-            sampleCustomId = result.custom_id
-            break // Just get the first one
+            allResults.push(result)
           }
 
-          if (!sampleCustomId) {
+          if (allResults.length === 0) {
             console.log(`Batch ${batch.id} has no results, skipping`)
             continue
           }
 
-          // Extract date from custom_id (format: YYYYMMDD-language-level)
+          // Extract date from first result's custom_id (format: YYYYMMDD-language-level)
+          const sampleCustomId = allResults[0]!.custom_id
           const dateStr = sampleCustomId.split('-')[0]
           if (!dateStr || dateStr.length !== 8) {
             console.error(
@@ -487,9 +397,88 @@ export class StoryGenerationService {
             continue
           }
 
-          // Process this batch
+          // Process all results in this batch
           console.log(`Processing batch ${batch.id} for date ${dateStr}`)
-          await this.processBatchResults(batch.id)
+
+          for (const result of allResults) {
+            if (result.result.type === 'succeeded') {
+              // Parse custom_id format: YYYYMMDD-language-level
+              const parts = result.custom_id.split('-')
+              const resultDateStr = parts[0]
+              const language = parts[1]
+              const level = parts[2]
+
+              if (
+                !resultDateStr ||
+                !language ||
+                !level ||
+                resultDateStr.length !== 8
+              ) {
+                console.error(`Invalid custom_id format: ${result.custom_id}`)
+                continue
+              }
+
+              // Extract date components from custom_id
+              const resultYear = resultDateStr.substring(0, 4)
+              const resultMonth = resultDateStr.substring(4, 6)
+              const resultDay = resultDateStr.substring(6, 8)
+
+              try {
+                // Extract the tool use from the response
+                const toolUse = result.result.message.content?.find(
+                  (block) => block.type === 'tool_use'
+                )
+
+                if (!toolUse || toolUse.type !== 'tool_use') {
+                  throw new Error('No tool use found in batch response')
+                }
+
+                const story = toolUse.input as StoryContent
+
+                console.log(
+                  `Processed story for ${language} at ${level} (${resultDateStr})`
+                )
+
+                // Save story to file using date from custom_id
+                const dirPath = path.join(
+                  process.cwd(),
+                  'stories',
+                  resultYear,
+                  resultMonth,
+                  resultDay,
+                  language,
+                  level
+                )
+                await mkdir(dirPath, { recursive: true })
+
+                const filePath = path.join(dirPath, 'story.json')
+                await writeFile(
+                  filePath,
+                  JSON.stringify(story, null, 2),
+                  'utf-8'
+                )
+                console.log(`Saved story to ${filePath}`)
+              } catch (error) {
+                console.error(
+                  `Error processing story for ${language} at ${level}:`,
+                  error instanceof Error ? error.message : 'Unknown error'
+                )
+              }
+            } else if (result.result.type === 'errored') {
+              const errorMsg =
+                typeof result.result.error === 'object'
+                  ? JSON.stringify(result.result.error)
+                  : String(result.result.error)
+              console.error(
+                `Failed to generate story for ${result.custom_id}: ${errorMsg}`
+              )
+            } else {
+              console.error(
+                `Failed to generate story for ${result.custom_id}: ${result.result.type}`
+              )
+            }
+          }
+
           processed++
         } catch (error) {
           console.error(
