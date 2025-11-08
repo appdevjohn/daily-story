@@ -558,15 +558,6 @@ export class StoryGenerationService {
     const month = (date.getMonth() + 1).toString().padStart(2, '0')
     const day = date.getDate().toString().padStart(2, '0')
 
-    // Check if there's already an in-progress batch
-    const existingBatchId = await this.checkInProgressBatch()
-    if (existingBatchId) {
-      console.log(
-        `Batch ${existingBatchId} is already in progress. Skipping new batch creation.`
-      )
-      return existingBatchId
-    }
-
     // Select themes for this date
     const themes = selectThemesForDate(date)
     console.log(`Selected themes for ${year}-${month}-${day}:`)

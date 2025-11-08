@@ -48,6 +48,20 @@ app.get('/generate-stories', async (_req: Request, res: Response) => {
       )
     }
 
+    // Step 2: Check if there's already a batch in progress
+    const inProgressBatchId = await storyService.checkInProgressBatch()
+    if (inProgressBatchId) {
+      messages.push(
+        `⏳ Batch ${inProgressBatchId} is currently in progress. Please wait for it to complete before requesting new stories.`
+      )
+      messages.push(
+        'Call this endpoint again to check for completed batches and process results.'
+      )
+      res.type('text/plain')
+      res.send(messages.join('\n'))
+      return
+    }
+
     const now = new Date()
     const tomorrow = new Date(now)
     tomorrow.setDate(tomorrow.getDate() + 1)
@@ -60,7 +74,7 @@ app.get('/generate-stories', async (_req: Request, res: Response) => {
       return `${year}-${month}-${day}`
     }
 
-    // Step 2: Check which stories need to be generated
+    // Step 3: Check which stories need to be generated
     const todayExists = await storyService.checkStoriesExistForDate(now)
     const tomorrowExists = await storyService.checkStoriesExistForDate(tomorrow)
 
@@ -77,7 +91,7 @@ app.get('/generate-stories', async (_req: Request, res: Response) => {
       res.type('text/plain')
       res.send(messages.join('\n'))
     } else {
-      // Step 3: Create batches without waiting for completion
+      // Step 4: Create batches without waiting for completion
       const batchIds: string[] = []
 
       for (const date of datesToGenerate) {
