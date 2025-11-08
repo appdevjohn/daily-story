@@ -54,13 +54,15 @@ h3 {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #667eea;
     color: white;
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    background: #5568d3;
+    color: white;
+    transform: none;
+    box-shadow: none;
 }
 
 .btn-secondary {
@@ -69,8 +71,9 @@ h3 {
 }
 
 .btn-secondary:hover {
-    background-color: #d0d0d0;
-    transform: translateY(-2px);
+    transform: none;
+    background-color: #d1cfcf;
+    color: #333;
 }
 
 /* Common link styles */

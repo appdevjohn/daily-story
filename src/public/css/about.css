@@ -83,23 +83,6 @@ h3 {
     min-width: 150px;
 }
 
-/* Tone down button effects for about page */
-.cta-buttons .btn-primary {
-    background: #667eea;
-    color: white;
-}
-
-.cta-buttons .btn-primary:hover {
-    background: #5568d3;
-    color: white;
-    transform: none;
-    box-shadow: none;
-}
-
-.cta-buttons .btn-secondary:hover {
-    transform: none;
-}
-
 /* Mobile responsive styles */
 @media (max-width: 768px) {
     h1 {
