@@ -4,71 +4,97 @@ h1 {
 }
 
 h2 {
-    margin-bottom: 15px;
-    font-size: 1.5rem;
+    margin-bottom: 18px;
+    font-size: 1.6rem;
+    margin-top: 2rem;
 }
 
 h3 {
-    margin: 0 0 10px 0;
-    font-size: 1.2rem;
+    margin: 0 0 12px 0;
+    font-size: 1.25rem;
 }
 
 .about-section {
-    margin-bottom: 35px;
+    margin-bottom: 40px;
 }
 
 .about-section p {
-    color: #555;
-    line-height: 1.7;
-    margin: 10px 0;
+    color: #57534E;
+    line-height: 1.8;
+    margin: 12px 0;
+    font-size: 1.05rem;
 }
 
 .cefr-intro {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     font-style: italic;
+    color: #78716C;
+    font-size: 1.05rem;
 }
 
 /* Level cards */
 .level-card {
-    background-color: #f8f9fa;
-    border-left: 4px solid #667eea;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 6px;
+    background-color: #FFFBF5;
+    border-left: 5px solid #F59E0B;
+    border: 2px solid #F3E8D7;
+    border-left: 5px solid #F59E0B;
+    padding: 24px;
+    margin-bottom: 18px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.06);
+    transition: all 0.3s ease;
+}
+
+.level-card:hover {
+    border-left-color: #D97706;
+    box-shadow: 0 4px 16px rgba(217, 119, 6, 0.12);
 }
 
 .level-card p {
-    margin: 8px 0;
-    font-size: 15px;
+    margin: 10px 0;
+    font-size: 1rem;
+    color: #44403C;
 }
 
 .level-card strong {
-    color: #333;
+    color: #1C1917;
+    font-weight: 600;
 }
 
 /* Lists */
 .how-to-list {
     list-style-position: outside;
-    padding-left: 20px;
-    margin: 15px 0;
+    padding-left: 24px;
+    margin: 18px 0;
 }
 
 .how-to-list li {
-    margin: 12px 0;
-    color: #555;
-    line-height: 1.7;
+    margin: 14px 0;
+    color: #57534E;
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+.how-to-list li::marker {
+    color: #F59E0B;
+    font-weight: 700;
 }
 
 .tips-list {
     list-style-type: disc;
-    padding-left: 20px;
-    margin: 15px 0;
+    padding-left: 24px;
+    margin: 18px 0;
 }
 
 .tips-list li {
-    margin: 10px 0;
-    color: #555;
-    line-height: 1.7;
+    margin: 14px 0;
+    color: #57534E;
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+.tips-list li::marker {
+    color: #F59E0B;
 }
 
 /* Call-to-action buttons */
@@ -148,15 +174,33 @@ h3 {
     .about-section p,
     .how-to-list li,
     .tips-list li {
-        color: #b0b0b0;
+        color: #D6D3D1;
+    }
+
+    .cefr-intro {
+        color: #A8A29E;
     }
 
     .level-card {
-        background-color: #3a3a3a;
-        border-left-color: #8b9ef5;
+        background-color: #44403C;
+        border: 2px solid #57534E;
+        border-left: 5px solid #FCD34D;
+    }
+
+    .level-card:hover {
+        border-left-color: #FBBF24;
+    }
+
+    .level-card p {
+        color: #D6D3D1;
     }
 
     .level-card strong {
-        color: #e0e0e0;
+        color: #FAFAF9;
+    }
+
+    .how-to-list li::marker,
+    .tips-list li::marker {
+        color: #FCD34D;
     }
 }
