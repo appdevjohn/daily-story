@@ -28,18 +28,17 @@
                 <label for="level">Select Skill Level</label>
                 <select id="level" name="level" required>
                     <option value="">Choose a level...</option>
-                    <optgroup label="Early Levels (Conversations)">
+                    <optgroup label="Early Levels">
                         <% earlyLevels.forEach(level => { %>
                             <option value="<%= level.toLowerCase() %>"><%= level %></option>
                         <% }) %>
                     </optgroup>
-                    <optgroup label="Intermediate Levels (Stories)">
+                    <optgroup label="Intermediate Levels">
                         <% intermediateLevels.forEach(level => { %>
                             <option value="<%= level.toLowerCase() %>"><%= level %></option>
                         <% }) %>
                     </optgroup>
                 </select>
-                <p class="level-info">Early levels show conversations, intermediate levels show stories</p>
             </div>
 
             <button type="submit" class="submit-btn">Get Today's Story</button>
