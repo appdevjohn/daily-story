@@ -43,22 +43,23 @@ stories/               # Generated stories (gitignored)
 - Format: Conversational (text messages, informal emails)
 - Structure: Array of message objects with `text` and `sender`
 - Questions: In English (reduce cognitive load)
-- Word count: 5-10 words per message, 10+ messages
+- Message count: 10+ messages
+- Message length: 5-10 words per message
 
 **Intermediate Levels (B1, B2):**
 
-- Format: Narrative (fables, flash fiction)
-- Structure: Single story text field
+- Format: Conversational (discussions, professional emails, debates)
+- Structure: Array of message objects with `text` and `sender`
 - Questions: In target language (full immersion)
-- Word count: B1 (300-500), B2 (400-600)
+- Message count: B1 (10-15 exchanges), B2 (12-18 exchanges)
+- Complexity: More abstract topics, nuanced language, varied sentence structures
 
 ### Story Schema
 
 ```typescript
 type StoryContent = {
   title: string
-  story?: string // B1/B2 only
-  messages?: { text: string; sender: string }[] // A1/A2 only
+  messages: { text: string; sender: string }[] // All levels use conversational format
   questions: {
     question: string
     options: string[] // Always 4 options
@@ -131,13 +132,14 @@ Core story generation service using class-based architecture:
 - `EARLY_LEVELS = ['A1', 'A2']`
 - `INTERMEDIATE_LEVELS = ['B1', 'B2']`
 - `CONVERSATIONAL_THEMES` - 130 conversation topics for A1/A2 levels
-- `NARRATIVE_THEMES` - 100+ story themes for B1/B2 levels
+- `INTERMEDIATE_CONVERSATIONAL_THEMES` - 128 conversation topics for B1/B2 levels
 
 **Theme System:**
 
 - `selectThemesForDate(date: Date)` - Deterministically selects themes based on date
 - Uses seeded random number generator for consistency (same date = same theme)
-- Returns both conversational and narrative themes
+- Returns both conversational and intermediate conversational themes
+- All levels now use conversational format with different complexity and themes
 
 **AI Generation Flow:**
 
@@ -191,7 +193,7 @@ Themes are selected deterministically based on date:
 - Seeded random number generator using date (YYYYMMDD format)
 - Same date always produces same themes across all instances
 - Ensures consistency for all users on a given day
-- 130 conversational themes (A1/A2) and 100+ narrative themes (B1/B2)
+- 130 conversational themes (A1/A2) and 128 intermediate conversational themes (B1/B2)
 
 ### Error Handling
 
@@ -242,7 +244,7 @@ npm start        # Run compiled production build
 
 - Stories reset daily (based on date)
 - Same story shown to all users on a given day
-- Themes selected deterministically per date (130 conversational, 100+ narrative themes)
+- Themes selected deterministically per date (130 conversational for A1/A2, 128 intermediate conversational for B1/B2)
 - All 8 languages at same level use the same theme on a given day
 - No user accounts or progress tracking
 - Quiz results are client-side only (not persisted)
@@ -257,7 +259,7 @@ npm start        # Run compiled production build
 
 ### Adding New Themes
 
-1. Add themes to `CONVERSATIONAL_THEMES` or `NARRATIVE_THEMES` in `src/storyService.ts`
+1. Add themes to `CONVERSATIONAL_THEMES` (A1/A2) or `INTERMEDIATE_CONVERSATIONAL_THEMES` (B1/B2) in `src/storyService.ts`
 2. Themes are automatically selected using deterministic random selection
 3. No other changes needed
 
