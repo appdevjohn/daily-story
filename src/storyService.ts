@@ -27,7 +27,7 @@ export const EARLY_LEVELS = ['A1', 'A2']
 export const INTERMEDIATE_LEVELS = ['B1', 'B2']
 
 // Theme lists for variety in story generation
-export const CONVERSATIONAL_THEMES = [
+export const EARLY_LEVEL_THEMES = [
   'planning a birthday party',
   'ordering food at a restaurant',
   'asking for directions in a new city',
@@ -129,106 +129,135 @@ export const CONVERSATIONAL_THEMES = [
   'planning a charity event',
 ]
 
-export const NARRATIVE_THEMES = [
-  'a magical object with unexpected consequences',
-  'overcoming a lifelong fear',
-  'an unlikely friendship between opposites',
-  'discovering a hidden family secret',
-  'a journey to find something lost',
-  'learning to forgive oneself',
-  'a missed opportunity and second chances',
-  'the wisdom found in nature',
-  'a mysterious stranger who changes everything',
-  'choosing between two paths',
-  'the cost of ambition',
-  'finding courage in a crisis',
-  'a lesson about honesty',
-  'the power of a single act of kindness',
-  'breaking free from tradition',
-  'a message that arrives too late',
-  'the true meaning of home',
-  'learning humility through failure',
-  'an unexpected inheritance',
-  'the consequences of greed',
-  'finding beauty in imperfection',
-  'a promise that must be kept',
-  'the weight of a secret',
-  'discovering inner strength',
-  'a choice between love and duty',
-  'the value of patience',
-  'an old rivalry renewed',
-  'learning to let go',
-  'a chance encounter that changes fate',
-  'the price of perfection',
-  'finding hope in darkness',
-  'a journey of self-discovery',
-  'the danger of assumptions',
-  'learning from elders',
-  'a talent hidden for too long',
-  'the healing power of time',
-  'a competition with unexpected results',
-  'discovering what truly matters',
-  'the consequences of jealousy',
-  'a voice that must be heard',
-  'learning acceptance',
-  'a sacrifice for the greater good',
-  'the danger of pride',
-  'finding peace after conflict',
-  'a gift that comes with responsibility',
-  'learning empathy through experience',
-  'a plan that goes wrong',
-  'the importance of trust',
-  'a memory that resurfaces',
-  'choosing principles over convenience',
-  'the value of simplicity',
-  'an adventure that teaches wisdom',
-  'learning gratitude',
-  'a transformation through hardship',
-  'the power of determination',
-  'a reunion after years apart',
-  'discovering hidden talents',
-  'the folly of rushing',
-  'learning cooperation',
-  'a risk that pays off',
-  'the importance of timing',
-  'a misunderstanding with serious consequences',
-  'finding joy in small things',
-  'a debt that must be repaid',
-  'learning from mistakes',
-  'an unexpected mentor',
-  'the cost of deception',
-  "finding one's true calling",
-  'a test of character',
-  'the value of perseverance',
-  'an old wound reopened',
-  'learning compassion',
-  'a tradition questioned',
-  'the power of words',
-  'finding strength in community',
-  'a discovery that challenges beliefs',
-  'learning resourcefulness',
-  'a journey home',
-  'the danger of complacency',
-  'finding clarity through solitude',
-  'a bargain with consequences',
-  'learning balance',
-  'an injustice confronted',
-  'the value of authenticity',
-  'a bridge between worlds',
-  'finding redemption',
-  'a cycle that must be broken',
-  'learning mindfulness',
-  'an echo from the past',
-  'the importance of preparation',
-  'finding connection in isolation',
-  'a harvest after long labor',
-  'learning responsibility',
-  'a mask that falls away',
-  'the power of vulnerability',
-  'finding light in the ordinary',
-  'a teacher who learns from the student',
-  'the value of boundaries',
-  'a storm weathered together',
+export const INTERMEDIATE_LEVEL_THEMES = [
+  'debating remote work versus office work',
+  'discussing career change considerations',
+  'explaining work-life balance strategies',
+  'negotiating a raise or promotion',
+  'handling conflict with a coworker',
+  'comparing freelancing to traditional employment',
+  'planning professional development goals',
+  'discussing effective team collaboration',
+  'giving constructive feedback to a colleague',
+  'exploring networking strategies',
+  'debating social media impact on relationships',
+  'discussing online privacy concerns',
+  'sharing digital detox experiences',
+  'exploring AI and automation in daily life',
+  'comparing online versus in-store shopping',
+  'discussing streaming services and content',
+  'debating digital learning versus traditional education',
+  'explaining cryptocurrency and digital payments',
+  'discussing smart home technology pros and cons',
+  'exploring screen time and health effects',
+  'discussing different music genres and their history',
+  'debating the benefits of routine versus spontaneity',
+  'sharing favorite childhood memories',
+  'comparing handwriting versus typing',
+  'discussing city parks and recreational spaces',
+  'exploring different photography styles',
+  'discussing home gardening techniques',
+  'debating morning versus evening routines',
+  'comparing different types of exercise',
+  'discussing memory improvement techniques',
+  'exploring mental health awareness',
+  'debating alternative medicine versus traditional',
+  'discussing nutrition myths and facts',
+  'comparing fitness trends and effectiveness',
+  'explaining sleep hygiene and productivity',
+  'sharing stress management techniques',
+  'discussing preventive healthcare approaches',
+  'exploring work-related health issues',
+  'debating mindfulness and meditation benefits',
+  'comparing healthcare experiences',
+  'discussing generational differences in technology use',
+  'exploring family traditions and customs',
+  'debating urban versus rural living',
+  'discussing the value of different hobbies',
+  'exploring effective communication skills',
+  'discussing time management for busy schedules',
+  'debating the importance of work-life boundaries',
+  'exploring strategies for maintaining motivation',
+  'discussing volunteer work and community service',
+  'sharing community involvement experiences',
+  'comparing book versus movie adaptations',
+  'discussing media consumption habits',
+  'debating the appeal of nostalgia',
+  'exploring reality TV influence on society',
+  'discussing museum and art accessibility',
+  'exploring language preservation efforts',
+  'debating music streaming versus physical media',
+  'discussing celebrity culture impact',
+  'exploring different film genres',
+  'discussing podcast popularity reasons',
+  'sharing adult learning experiences',
+  'discussing overcoming perfectionism',
+  'comparing time management philosophies',
+  'exploring habit-building strategies',
+  'discussing public speaking anxiety',
+  'debating financial literacy importance',
+  'sharing creative hobbies and their benefits',
+  'discussing mentorship relationships',
+  'exploring the self-improvement industry',
+  'comparing goal-setting strategies',
+  'discussing maintaining long-distance friendships',
+  'exploring family expectations versus personal choices',
+  'debating dating in the digital age',
+  'discussing multi-generational households',
+  'exploring the choice to have children',
+  'debating work friendships boundaries',
+  'comparing cultural differences in parenting',
+  'discussing solo living versus roommates',
+  'exploring community building in neighborhoods',
+  'discussing neighborly disputes resolution',
+  'debating minimalism versus collecting',
+  'exploring subscription service value',
+  'discussing smart shopping strategies',
+  'comparing gig economy pros and cons',
+  'discussing housing market challenges',
+  'debating saving versus investing strategies',
+  'exploring secondhand shopping benefits',
+  'discussing brand loyalty in modern times',
+  'exploring consumer rights awareness',
+  'debating sharing economy services',
+  'discussing online degrees credibility',
+  'exploring lifelong learning importance',
+  'debating student loan management',
+  'discussing gap year benefits and drawbacks',
+  'exploring different education paths',
+  'comparing vocational training to university',
+  'discussing different learning styles',
+  'sharing study abroad experiences',
+  'debating technology use in classrooms',
+  'exploring critical thinking skills development',
+  'discussing respectful tourism practices',
+  'exploring cultural sensitivity while traveling',
+  'debating digital nomad lifestyle',
+  'discussing language learning while traveling',
+  'exploring travel budgeting strategies',
+  'comparing travel planning approaches',
+  'debating adventure travel versus relaxation',
+  'sharing solo travel experiences',
+  'discussing cultural shock adjustment',
+  'exploring wildlife watching and nature tourism',
+  'debating plant-based diet considerations',
+  'discussing food allergies and dining out',
+  'exploring meal planning strategies',
+  'discussing restaurant tipping culture',
+  'debating cooking skills importance',
+  'exploring ethnic cuisine authenticity',
+  'discussing seasonal cooking and local ingredients',
+  'debating intermittent fasting trends',
+  'exploring farmers markets and local food',
+  'comparing cooking from scratch to convenience foods',
+  'discussing side hustles and passive income',
+  'exploring imposter syndrome in professional life',
+  'debating college major selection factors',
+  'discussing burnout prevention strategies',
+  'exploring personal finance apps and budgeting',
+  'debating rent versus buy decisions',
+  'discussing creative problem-solving approaches',
+  'exploring the four-day work week concept',
 ]
 
 // Simple seeded random number generator for deterministic theme selection
@@ -240,22 +269,23 @@ const seededRandom = (seed: number): number => {
 // Select themes for a given date (deterministic based on date)
 export const selectThemesForDate = (
   date: Date
-): { conversational: string; narrative: string } => {
+): { early: string; intermediate: string } => {
   // Create a seed from the date (YYYYMMDD format)
   const seed =
     date.getFullYear() * 10000 + (date.getMonth() + 1) * 100 + date.getDate()
 
   // Use seed to select indices
-  const conversationalIndex = Math.floor(
-    seededRandom(seed) * CONVERSATIONAL_THEMES.length
+  const earlyConversationIndex = Math.floor(
+    seededRandom(seed) * EARLY_LEVEL_THEMES.length
   )
-  const narrativeIndex = Math.floor(
-    seededRandom(seed + 1) * NARRATIVE_THEMES.length
+  const intermediateConversationIndex = Math.floor(
+    seededRandom(seed + 1) * INTERMEDIATE_LEVEL_THEMES.length
   )
 
   return {
-    conversational: CONVERSATIONAL_THEMES[conversationalIndex] || '',
-    narrative: NARRATIVE_THEMES[narrativeIndex] || '',
+    early: EARLY_LEVEL_THEMES[earlyConversationIndex] || '',
+    intermediate:
+      INTERMEDIATE_LEVEL_THEMES[intermediateConversationIndex] || '',
   }
 }
 
@@ -485,8 +515,8 @@ export class StoryGenerationService {
     const selectedTheme =
       theme ||
       (EARLY_LEVELS.includes(level)
-        ? selectThemesForDate(new Date()).conversational
-        : selectThemesForDate(new Date()).narrative)
+        ? selectThemesForDate(new Date()).early
+        : selectThemesForDate(new Date()).intermediate)
 
     const response = await this.client.messages.create({
       model: 'claude-sonnet-4-5',
@@ -525,8 +555,8 @@ export class StoryGenerationService {
     // Select themes for this date
     const themes = selectThemesForDate(date)
     console.log(`Selected themes for ${year}-${month}-${day}:`)
-    console.log(`  Conversational (A1/A2): ${themes.conversational}`)
-    console.log(`  Narrative (B1/B2): ${themes.narrative}`)
+    console.log(`  Early (A1/A2): ${themes.early}`)
+    console.log(`  Intermediate (B1/B2): ${themes.intermediate}`)
 
     // Create batch requests
     const batchRequests = []
@@ -534,8 +564,8 @@ export class StoryGenerationService {
       for (const level of levels) {
         // Select appropriate theme based on level
         const theme = EARLY_LEVELS.includes(level)
-          ? themes.conversational
-          : themes.narrative
+          ? themes.early
+          : themes.intermediate
 
         batchRequests.push({
           custom_id: `${year}${month}${day}-${language.toLowerCase()}-${level.toLowerCase()}`,
@@ -574,119 +604,76 @@ export class StoryGenerationService {
     const isEarlyLevel = EARLY_LEVELS.includes(level)
     const questionLanguage = isEarlyLevel ? 'English' : language
 
-    if (isEarlyLevel) {
-      return {
-        name: 'create_story',
-        description: `Create a ${level} level conversational story in ${language}`,
-        input_schema: {
-          type: 'object',
-          properties: {
-            title: {
-              type: 'string',
-              description: `The conversation title in ${language}`,
-            },
-            messages: {
-              type: 'array',
-              description: `Array of at least 10 message objects in the conversation`,
-              items: {
-                type: 'object',
-                properties: {
-                  text: {
-                    type: 'string',
-                    description: `The message text in ${language}`,
-                  },
-                  sender: {
-                    type: 'string',
-                    description: 'The name of the person sending the message',
-                  },
-                },
-                required: ['text', 'sender'],
-              },
-              minItems: 10,
-            },
-            questions: {
-              type: 'array',
-              description: `Array of exactly 3 comprehension questions in ${questionLanguage}`,
-              items: {
-                type: 'object',
-                properties: {
-                  question: {
-                    type: 'string',
-                    description: `The question text in ${questionLanguage}`,
-                  },
-                  options: {
-                    type: 'array',
-                    description: 'Array of exactly 4 answer options',
-                    items: { type: 'string' },
-                    minItems: 4,
-                    maxItems: 4,
-                  },
-                  correctAnswer: {
-                    type: 'number',
-                    description:
-                      'The index (0-3) of the correct answer in the options array',
-                    minimum: 0,
-                    maximum: 3,
-                  },
-                },
-                required: ['question', 'options', 'correctAnswer'],
-              },
-              minItems: 3,
-              maxItems: 3,
-            },
+    // Determine minimum number of messages based on level
+    let minMessages = 10
+    if (level === 'B1') {
+      minMessages = 10 // 10-15 exchanges as specified in prompt
+    } else if (level === 'B2') {
+      minMessages = 12 // 12-18 exchanges as specified in prompt
+    }
+
+    return {
+      name: 'create_story',
+      description: `Create a ${level} level conversational story in ${language}`,
+      input_schema: {
+        type: 'object',
+        properties: {
+          title: {
+            type: 'string',
+            description: `The conversation title in ${language}`,
           },
-          required: ['title', 'messages', 'questions'],
-        },
-      }
-    } else {
-      return {
-        name: 'create_story',
-        description: `Create a ${level} level narrative story in ${language}`,
-        input_schema: {
-          type: 'object',
-          properties: {
-            title: {
-              type: 'string',
-              description: `The story title in ${language}`,
-            },
-            story: {
-              type: 'string',
-              description: `The complete story text in ${language}`,
-            },
-            questions: {
-              type: 'array',
-              description: `Array of exactly 3 comprehension questions in ${questionLanguage}`,
-              items: {
-                type: 'object',
-                properties: {
-                  question: {
-                    type: 'string',
-                    description: `The question text in ${questionLanguage}`,
-                  },
-                  options: {
-                    type: 'array',
-                    description: 'Array of exactly 4 answer options',
-                    items: { type: 'string' },
-                    minItems: 4,
-                    maxItems: 4,
-                  },
-                  correctAnswer: {
-                    type: 'number',
-                    description:
-                      'The index (0-3) of the correct answer in the options array',
-                    minimum: 0,
-                    maximum: 3,
-                  },
+          messages: {
+            type: 'array',
+            description: `Array of at least ${minMessages} message objects in the conversation`,
+            items: {
+              type: 'object',
+              properties: {
+                text: {
+                  type: 'string',
+                  description: `The message text in ${language}`,
                 },
-                required: ['question', 'options', 'correctAnswer'],
+                sender: {
+                  type: 'string',
+                  description: 'The name of the person sending the message',
+                },
               },
-              minItems: 3,
-              maxItems: 3,
+              required: ['text', 'sender'],
             },
+            minItems: minMessages,
           },
-          required: ['title', 'story', 'questions'],
+          questions: {
+            type: 'array',
+            description: `Array of exactly 3 comprehension questions in ${questionLanguage}`,
+            items: {
+              type: 'object',
+              properties: {
+                question: {
+                  type: 'string',
+                  description: `The question text in ${questionLanguage}`,
+                },
+                options: {
+                  type: 'array',
+                  description: 'Array of exactly 4 answer options',
+                  items: { type: 'string' },
+                  minItems: 4,
+                  maxItems: 4,
+                },
+                correctAnswer: {
+                  type: 'number',
+                  description:
+                    'The index (0-3) of the correct answer in the options array',
+                  minimum: 0,
+                  maximum: 3,
+                },
+              },
+              required: ['question', 'options', 'correctAnswer'],
+            },
+            minItems: 3,
+            maxItems: 3,
+          },
         },
-      }
+        required: ['title', 'messages', 'questions'],
+      },
     }
   }
 
@@ -696,41 +683,46 @@ export class StoryGenerationService {
 
     switch (level) {
       case 'A1':
-        promptString = `Create a casual text message conversation in ${language} at a ${level} language level between two people about: ${theme}.
+        promptString = `Create a natural spoken conversation in ${language} at a ${level} language level between two people talking in person about: ${theme}.
 
-Write at least 10 alternating messages with natural back-and-forth exchanges.
-Use only simple, common vocabulary and short sentences (5-10 words per message) appropriate for absolute beginners.
-Include greetings, questions, and responses that feel natural and conversational.
+Write at least 10 alternating dialogue exchanges with natural back-and-forth as if two people are speaking face-to-face.
+Use only simple, common vocabulary and short sentences (5-10 words per turn) appropriate for absolute beginners.
+Include natural spoken elements like greetings, questions, short responses, and simple reactions that people use in everyday conversations.
+The dialogue should sound like two people actually talking to each other, not writing messages.
 
 Then create a title and three multiple-choice questions in ${questionLanguage} to quiz the reader's comprehension.`
         break
 
       case 'A2':
-        promptString = `Create an informal email exchange in ${language} at a ${level} language level between two people (friends, classmates, or casual acquaintances) about: ${theme}.
+        promptString = `Create a casual spoken conversation in ${language} at a ${level} language level between two people (friends, classmates, or casual acquaintances) talking in person about: ${theme}.
 
-Write at least 10 emails total, alternating between the two people. Don't include a greeting or closing in any of the emails; only write the body text.
+Write at least 10 dialogue turns, alternating between the two people as they speak naturally to each other.
 Use simple vocabulary with some basic connectors and complete sentences suitable for elementary learners.
-Maintain a friendly, informal tone throughout.
+Maintain a friendly, informal tone throughout and include natural spoken elements like fillers, confirmations, and reactions that people use when talking.
+The conversation should sound like real people speaking to each other face-to-face, not written communication.
 
 Then create a title and three multiple-choice questions in ${questionLanguage} to quiz the reader's comprehension.`
         break
 
       case 'B1':
-        promptString = `Write an engaging fable or moral tale in ${language} at a ${level} language level with the theme: ${theme}.
+        promptString = `Create a natural spoken conversation in ${language} at a ${level} language level between two or more people talking in person about: ${theme}.
 
-The story should be 300-500 words and include animal or human characters with a clear narrative arc.
-Use a mix of common and moderately advanced vocabulary with varied sentence structures including some compound and complex sentences.
-The story should be accessible to intermediate learners while providing some challenge.
+Write at least 10-15 dialogue exchanges that explore the topic with some depth. The conversation should feel like real people discussing something face-to-face, allowing for expression of opinions, explanations, and personal experiences.
+Use a mix of common and moderately advanced vocabulary with varied sentence structures including compound and complex sentences.
+Include transitional phrases, connectors, and natural spoken expressions that intermediate learners need to practice.
+Incorporate natural conversation elements like agreements, disagreements, clarifications, and follow-up questions that occur in real discussions.
+The language should be accessible to lower-intermediate learners while providing appropriate challenge.
 
 Then create a title and three multiple-choice questions in ${questionLanguage} to quiz the reader's comprehension.`
         break
 
       case 'B2':
-        promptString = `Write a compelling flash-fiction story in ${language} at a ${level} language level with the theme: ${theme}.
+        promptString = `Create a substantive in-person conversation or discussion in ${language} at a ${level} language level where two or more people talk about: ${theme}.
 
-The story should be 400-600 words with a complete narrative featuring developed characters and an interesting plot twist or insight.
-Use diverse vocabulary including idiomatic expressions, varied sentence structures with complex grammar, and descriptive language.
-The story should be engaging and sophisticated enough to challenge upper-intermediate learners.
+Write at least 12-18 dialogue exchanges that explore the topic in depth, including nuanced viewpoints, detailed explanations, or thoughtful analysis.
+Use diverse vocabulary including idiomatic expressions, phrasal verbs, and topic-specific terminology. Employ varied sentence structures with complex grammar and sophisticated linking expressions.
+The conversation should sound like educated native speakers having a thoughtful discussion, with natural fluency, abstract reasoning, hypothetical situations, or persuasive elements appropriate for upper-intermediate learners.
+Include realistic spoken conversation features like hedging, emphasis, interruptions (polite), elaborations, and natural turn-taking patterns.
 
 Then create a title and three multiple-choice questions in ${questionLanguage} to quiz the reader's comprehension.`
         break
